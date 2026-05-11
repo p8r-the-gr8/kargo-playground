@@ -57,3 +57,6 @@ spec:
             sources:
             - repoURL: ${{ vars.gitopsRepo }}
               desiredRevision: ${{ outputs.commit.commit }}
+  verification:
+    analysisTemplates:
+    - name: random-test
