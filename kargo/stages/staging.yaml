@@ -3,6 +3,8 @@ kind: Stage
 metadata:
   name: staging
   namespace: kargo-playground
+  annotations:
+    kargo.akuity.io/color: "#0000ff"
 spec:
   requestedFreight:
   - origin:

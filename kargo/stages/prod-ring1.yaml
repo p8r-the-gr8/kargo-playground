@@ -3,6 +3,8 @@ kind: Stage
 metadata:
   name: prod-ring1
   namespace: kargo-playground
+  annotations:
+    kargo.akuity.io/color: "#ff8800"
 spec:
   requestedFreight:
   - origin:
