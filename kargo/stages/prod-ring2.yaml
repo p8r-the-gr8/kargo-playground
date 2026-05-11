@@ -13,6 +13,7 @@ spec:
     sources:
       stages:
       - prod-ring1
+      requiredSoakTime: 15s
   promotionTemplate:
     spec:
       vars:

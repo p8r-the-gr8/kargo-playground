@@ -13,6 +13,7 @@ spec:
     sources:
       stages:
       - staging
+      requiredSoakTime: 30s
   promotionTemplate:
     spec:
       vars:

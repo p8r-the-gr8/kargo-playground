@@ -13,3 +13,9 @@ spec:
   - stageSelector:
       name: staging
     autoPromotionEnabled: true
+  - stageSelector:
+      name: prod-ring1
+    autoPromotionEnabled: true
+  - stageSelector:
+      name: prod-ring2
+    autoPromotionEnabled: true
