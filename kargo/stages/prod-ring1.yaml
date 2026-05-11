@@ -1,0 +1,58 @@
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: prod-ring1
+  namespace: kargo-playground
+spec:
+  requestedFreight:
+  - origin:
+      kind: Warehouse
+      name: web-app
+    sources:
+      stages:
+      - staging
+  promotionTemplate:
+    spec:
+      vars:
+      - name: gitopsRepo
+        value: https://github.com/p8r-the-gr8/kargo-playground.git
+      - name: srcPath
+        value: ./src
+      - name: outPath
+        value: ./out
+      - name: targetBranch
+        value: stage/prod-ring1
+      - name: kustomizePath
+        value: components/web-app/production/ring1
+      steps:
+      - uses: git-clone
+        config:
+          repoURL: ${{ vars.gitopsRepo }}
+          checkout:
+          - commit: ${{ commitFrom(vars.gitopsRepo).ID }}
+            path: ${{ vars.srcPath }}
+          - branch: ${{ vars.targetBranch }}
+            create: true
+            path: ${{ vars.outPath }}
+      - uses: git-clear
+        config:
+          path: ${{ vars.outPath }}
+      - uses: kustomize-build
+        config:
+          path: ${{ vars.srcPath }}/${{ vars.kustomizePath }}
+          outPath: ${{ vars.outPath }}
+      - uses: git-commit
+        as: commit
+        config:
+          path: ${{ vars.outPath }}
+          message: "Promote web-app to production (ring 1)"
+      - uses: git-push
+        config:
+          path: ${{ vars.outPath }}
+      - uses: argocd-update
+        config:
+          apps:
+          - name: web-app-prod-ring1
+            sources:
+            - repoURL: ${{ vars.gitopsRepo }}
+              desiredRevision: ${{ outputs.commit.commit }}

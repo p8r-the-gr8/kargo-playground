@@ -1,0 +1,15 @@
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Warehouse
+metadata:
+  name: web-app
+  namespace: kargo-playground
+spec:
+  subscriptions:
+  - git:
+      repoURL: https://github.com/p8r-the-gr8/kargo-playground.git
+      branch: main
+      includePaths:
+      - components/web-app
+      excludePaths:
+      - kargo
+      - argocd

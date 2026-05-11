@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: web-app-prod-ring1
+  namespace: argocd
+  annotations:
+    kargo.akuity.io/authorized-stage: kargo-playground:prod-ring1
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/p8r-the-gr8/kargo-playground.git
+    targetRevision: stage/prod-ring1
+    path: .
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: web-app-prod-ring1
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

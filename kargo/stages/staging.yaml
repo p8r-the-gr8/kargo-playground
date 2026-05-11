@@ -1,0 +1,57 @@
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: staging
+  namespace: kargo-playground
+spec:
+  requestedFreight:
+  - origin:
+      kind: Warehouse
+      name: web-app
+    sources:
+      direct: true
+  promotionTemplate:
+    spec:
+      vars:
+      - name: gitopsRepo
+        value: https://github.com/p8r-the-gr8/kargo-playground.git
+      - name: srcPath
+        value: ./src
+      - name: outPath
+        value: ./out
+      - name: targetBranch
+        value: stage/staging
+      - name: kustomizePath
+        value: components/web-app/staging
+      steps:
+      - uses: git-clone
+        config:
+          repoURL: ${{ vars.gitopsRepo }}
+          checkout:
+          - commit: ${{ commitFrom(vars.gitopsRepo).ID }}
+            path: ${{ vars.srcPath }}
+          - branch: ${{ vars.targetBranch }}
+            create: true
+            path: ${{ vars.outPath }}
+      - uses: git-clear
+        config:
+          path: ${{ vars.outPath }}
+      - uses: kustomize-build
+        config:
+          path: ${{ vars.srcPath }}/${{ vars.kustomizePath }}
+          outPath: ${{ vars.outPath }}
+      - uses: git-commit
+        as: commit
+        config:
+          path: ${{ vars.outPath }}
+          message: "Promote web-app to staging"
+      - uses: git-push
+        config:
+          path: ${{ vars.outPath }}
+      - uses: argocd-update
+        config:
+          apps:
+          - name: web-app-staging
+            sources:
+            - repoURL: ${{ vars.gitopsRepo }}
+              desiredRevision: ${{ outputs.commit.commit }}

@@ -1,0 +1,15 @@
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Project
+metadata:
+  name: kargo-playground
+---
+apiVersion: kargo.akuity.io/v1alpha1
+kind: ProjectConfig
+metadata:
+  name: kargo-playground
+  namespace: kargo-playground
+spec:
+  promotionPolicies:
+  - stageSelector:
+      name: staging
+    autoPromotionEnabled: true
