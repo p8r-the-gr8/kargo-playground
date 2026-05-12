@@ -50,15 +50,28 @@ spec:
           path: ${{ vars.outPath }}
           message: "Promote web-app to production (ring 2)"
       - uses: git-push
+        as: push
         config:
           path: ${{ vars.outPath }}
+          generateTargetBranch: true
+      - uses: git-open-pr
+        as: openPr
+        config:
+          repoURL: ${{ vars.gitopsRepo }}
+          sourceBranch: ${{ outputs.push.branch }}
+          targetBranch: ${{ vars.targetBranch }}
+      - uses: git-wait-for-pr
+        as: waitForPr
+        config:
+          repoURL: ${{ vars.gitopsRepo }}
+          prNumber: ${{ outputs.openPr.pr.id }}
       - uses: argocd-update
         config:
           apps:
           - name: web-app-prod-ring2
             sources:
             - repoURL: ${{ vars.gitopsRepo }}
-              desiredRevision: ${{ outputs.commit.commit }}
+              desiredRevision: ${{ outputs.waitForPr.commit }}
   verification:
     analysisTemplates:
     - name: random-test
