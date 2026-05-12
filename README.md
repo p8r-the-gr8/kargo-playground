@@ -10,6 +10,12 @@
 | 32081 | Web-app (Prod-ring1) |
 | 32082 | Web-app (Prod-ring2) |
 
+## Promotions
+
+- Staging: **Automatically**, as soon as a freight is created from the source
+- Prod-ring1: **Automatically**, but only after a **soak time**.
+- Prod-ring2: After **soak time**, a **PR is opened** for human review and approval. Once the PR is merged, the promotions continues.
+
 ## Deployment
 
 1. Prerequisites:
